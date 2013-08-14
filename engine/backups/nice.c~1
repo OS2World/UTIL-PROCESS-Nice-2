@@ -1,0 +1,151 @@
+/*
+ *  Project: NICE/2
+ *
+ *  By Sharon Dagan, idagan@il.ibm.com
+ *  (C) copyright 1998, all rights reserved to IBM Israel
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#define INCL_DOS
+#define INCL_DOSERRORS
+#include <os2.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "nice.h"
+#include "globals.h"
+
+
+CHAR * ArgVal( LONG argc, CHAR ** argv, CHAR * arg );
+LONG   ArgIndex( LONG argc, CHAR ** argv, CHAR * arg );
+CHAR * NextArg( LONG argc, CHAR ** argv, LONG index );
+APIRET Message( LONG rc );
+
+
+int main( int argc, char ** argv )
+{
+    APIRET      rc;
+    ULONG       ulPid;
+    ULONG       ulTid;
+    ULONG       ulClass;
+    LONG        lDelta;
+    CHAR *      pszClassName;
+    CHAR *      pszTid;
+
+    if( argc < 7 )
+        return Message( ERR_USAGE );
+
+    if( !ArgIndex( argc, argv, "-p" ) ||
+        !ArgIndex( argc, argv, "-c" ) ||
+        !ArgIndex( argc, argv, "-d" ) )
+        return Message( ERR_USAGE );
+
+    ulPid = atoi( ArgVal( argc, argv, "-p" ) );
+    if( !ulPid )
+        return Message( ERROR_INVALID_PROCID );
+
+    pszClassName = NextArg( argc, argv, ArgIndex( argc, argv, "-c" ) );
+    if( !stricmp( pszClassName, "nc" ) )
+        ulClass = PRTYC_NOCHANGE;
+    else if( !stricmp( pszClassName, "i" ) )
+        ulClass = PRTYC_IDLETIME;
+    else if( !stricmp( pszClassName, "r" ) )
+        ulClass = PRTYC_REGULAR;
+    else if( !stricmp( pszClassName, "f" ) )
+        ulClass = PRTYC_FOREGROUNDSERVER;
+    else if( !stricmp( pszClassName, "tc" ) )
+        ulClass = PRTYC_TIMECRITICAL;
+    else return Message( ERROR_INVALID_PCLASS );
+
+    lDelta = atoi( ArgVal( argc, argv, "-d" ) );
+    if( lDelta < -31 ||
+        lDelta > 31 )
+        return Message( ERROR_INVALID_PDELTA );
+
+    ulTid = 0;
+    pszTid = ArgVal( argc, argv, "-t" );
+    if( pszTid )
+        ulTid = atoi( pszTid );
+
+    rc = NiceSetPriority( ulPid, ulTid, ulClass, lDelta );
+    return Message( rc );
+};
+
+
+LONG ArgIndex( LONG argc, CHAR ** argv, CHAR * arg )
+{
+    while( argc > 1 )
+        if( !strcmp( argv[ argc - 1 ], arg ) )
+            return argc - 1;
+        else
+            argc--;
+
+    return 0;
+};
+
+
+CHAR * ArgVal( LONG argc, CHAR ** argv, CHAR * arg )
+{
+    LONG index;
+
+    index = argIndex( argc, argv, arg );
+    if( index == 0 )
+        return NULL;
+
+    return nextArg( argc, argv, index );
+};
+
+
+CHAR * NextArg( LONG argc, CHAR ** argv, LONG index )
+{
+    if( index >= argc - 1 )
+        return NULL;
+
+    return argv[ index + 1 ];
+};
+
+
+APIRET Message( APIRET rc )
+{
+    CHAR        msg[ 256 ];
+
+    switch( rc )
+    {
+        case NO_ERROR:
+            return rc;
+
+        case ERR_USAGE:
+            printf( "NICE/2 by Sharon Dagan <idagan@il.ibm.com>\n" \
+                    "usage: nice.exe -p PID [ -t TID ] -c CLASS -d DELTA\n" \
+                    "where PID   is the process id\n" \
+                    "      TID   is the thread id - valid for PM processes only\n" \
+                    "      CLASS is the priority class NC=no change I=idle R=regular\n" \
+                    "               F=forground TC=time critical\n" \
+                    "      DELTA is the priority delta -31 =< DELTA <= +31\n" );
+            return rc;
+
+        case ERR_ENGINE_STARTED:
+            strcpy( msg, "niced engine already started\n" );
+            break;
+
+        case ERR_ENGINE_STOPPED:
+            strcpy( msg, "niced engine not started\n" );
+            break;
+
+        case ERR_NOT_PM_PROCESS:
+            strcpy( msg, "PID is not a PM process\n" );
+            break;
+
+        default:
+            strcpy( msg, "returned from an OS/2 API call\n" );
+    };
+
+    printf( "rc = %d %s", rc, msg );
+    return rc;
+};
+
+
+

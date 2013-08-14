@@ -1,0 +1,106 @@
+# GNU Make
+
+DEBUG    = 0
+
+BASE_CC  = icc /c /Ss /G5
+BASE_LD  = ilink /pmtype:vio
+
+IMPLIB   = implib /NOI
+MKLIB    = ilib /NOBACKUP /CONV /NOE /NOBR
+
+ifeq ($(DEBUG),1)
+    CC      = $(BASE_CC) /Ti+ /D_NICE_DEBUG_
+    LD_DLL  = $(BASE_LD) /dll /debug
+    LD_EXE  = $(BASE_LD) /debug
+else
+    CC      = $(BASE_CC) /O+ /Oc-
+    LD_DLL  = $(BASE_LD) /dll /exepack:2
+    LD_EXE  = $(BASE_LD) /exepack:2
+endif
+
+VERSION = 004
+
+all: niced.exe nicedhk.dll nicedmn.dll nice.dll nice.exe niceps.exe rxnice.dll
+
+bin:
+	make.exe
+	make.exe -f sample.mak
+	-zip ..\zip\nice$(VERSION)_src.zip *
+	-zip ..\zip\nice$(VERSION)_sdk.zip nice.h nice.lib sample.mak sample.obj sample.c \
+		                        sample.exe sample1.cmd sample2.cmd rxnice.dll
+	-zip ..\zip\nice$(VERSION)_bin.zip niced.exe nicedhk.dll nicedmn.dll nice.dll \
+	 	                        nice.exe niceps.exe history.txt readme.txt
+	-copy ..\zip\nice$(VERSION)_sdk.zip ..\zip\nice_sdk.zip
+	-zip -mj ..\zip\nice$(VERSION)_bin.zip ..\zip\nice_sdk.zip
+
+niced.exe: niced.obj nicedhk.dll
+	$(LD_EXE) /o:niced.exe niced.obj nicedhk.lib niced.def
+
+niced.obj: niced.c globals.h
+	$(CC) niced.c
+
+nicedhk.dll: hook.obj nicedmn.dll
+	$(LD_DLL) /o:nicedhk.dll hook.obj nicedmn.lib nicedhk.def
+	$(IMPLIB) nicedhk.lib nicedhk.def
+	$(MKLIB) nicedhk.lib ,,
+
+hook.obj: hook.c globals.h
+	$(CC) /Gm+ hook.c
+
+nicedmn.dll: engine.obj
+	$(LD_DLL) /o:nicedmn.dll engine.obj nicedmn.def
+	$(IMPLIB) nicedmn.lib nicedmn.def
+	$(MKLIB) nicedmn.lib ,,
+
+engine.obj: engine.c globals.h
+	$(CC) /W2 engine.c
+
+nice.dll: client.obj
+	$(LD_DLL) /o:nice.dll client.obj nice.def
+	$(IMPLIB) nice.lib nice.def
+	$(MKLIB) nice.lib ,,
+
+client.obj: client.c nice.h globals.h
+	$(CC) client.c
+
+nice.exe: nice.obj client.obj
+	$(LD_EXE) /o:nice.exe nice.obj client.obj nice.def
+
+nice.obj: nice.c nice.h globals.h
+	$(CC) nice.c
+
+niceps.exe: ps.obj
+	$(LD_EXE) /o:niceps.exe ps.obj ps.def
+
+ps.obj: ps.c
+	$(CC) ps.c
+
+rxnice.dll: rxnice.obj nice.dll rxnice.def
+	$(LD_DLL) /o:rxnice.dll rxnice.obj nice.lib rexx.lib rxnice.def
+
+rxnice.obj: rxnice.c globals.h
+	$(CC) /Ge- rxnice.c
+
+
+clean:
+#   -niced.exe -stop
+	-del niced.exe
+	-del niced.obj
+	-del nicedhk.dll
+	-del nicedhk.lib
+	-del hook.obj
+	-del nicedmn.dll
+	-del nicedmn.lib
+	-del engine.obj
+	-del nice.dll
+	-del nice.lib
+	-del client.obj
+	-del nice.exe
+	-del nice.obj
+	-del niceps.exe
+	-del ps.obj
+	-del rxnice.dll
+	-del rxnice.obj
+	-make.exe -f sample.mak clean
+	
+

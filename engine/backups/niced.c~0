@@ -1,0 +1,702 @@
+/*
+ *  Project: NICE/2
+ *
+ *  By Sharon Dagan, idagan@il.ibm.com
+ *  (C) copyright 1998, all rights reserved to IBM Israel
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#define INCL_DOS
+#define INCL_DOSERRORS
+#define INCL_WIN
+#include <os2.h>
+#include <stdio.h>
+#include <string.h>
+#include <signal.h>
+#include "globals.h"
+#include "util.h"
+
+
+#ifdef _ENGINE_DEBUG_
+extern VOID     _System Engine( ULONG );  // from NICEDMN.DLL
+extern TID      gTidEngine;			      //
+extern HMODULE  gHmEngine;                //
+#endif
+
+extern BOOL _System EngineInputHook( HAB hab, PQMSG pqmsg, ULONG fs );  // from NICEDHK.DLL
+extern BOOL _System TlwInputHook( HAB hab, PQMSG pqmsg, ULONG fs );     // from NICEDHK.DLL
+
+
+HEV	   gHevInstance;		  // single instance indicator	
+
+LONG   ArgIndex( LONG argc, CHAR ** argv, CHAR * arg );
+APIRET Message( APIRET rc );
+
+APIRET StartEngine( ULONG );  // for "-start"
+APIRET StopEngine( VOID );    // for "-stop"
+APIRET Status( VOID );        // for no parameters
+
+APIRET WinInit( HAB *, HMQ * );
+APIRET WinTerm( HAB, HMQ );
+
+HAB    gHab;				  // for cleanup
+HMQ    gHmq;				  //
+PFN    gHookFunc;             //
+
+APIRET RunInContext( HAB, HWND, PFN, MPARAM, MPARAM );
+VOID   _System ContextHookCleanup( VOID );
+
+#ifdef _RT_DEBUG_
+HPIPE  gHpConsole;			  // for cleanup
+
+APIRET InitConsole( HPIPE * );
+APIRET RunConsole( HPIPE );
+VOID   ConsoleCleanup( INT );
+#endif
+
+
+int main( int argc, char ** argv )
+{
+	APIRET 		rc;
+	APIRET 		rc2;
+	ULONG		ulOptions = 0;
+	HPIPE		hp;
+	
+	/*
+	 *  make sure we are the only instance
+	 *
+	 **/
+
+	#ifndef _ENGINE_DEBUG_
+	rc = DosCreateEventSem( NICE_HEV_INSTANCE,
+					   		&gHevInstance,
+					   		DC_SEM_SHARED,
+					   		FALSE );
+	
+	if( rc == ERROR_DUPLICATE_NAME )
+		return Message( ERR_INSTANCE );					   		
+	else if( rc )
+		return Message( rc );				   		
+	#endif	
+	
+	if( argc > 4 ||
+		ArgIndex( argc, argv, "-?" ) )
+		return Message( ERR_USAGE );
+		
+	if( ArgIndex( argc, argv, "-stop" ) &&
+	    argc > 2 )
+	    return Message( ERR_USAGE );
+	
+	if( argc > 1 &&
+		!ArgIndex( argc, argv, "-?" ) &&
+		!ArgIndex( argc, argv, "-start" ) &&   		
+		!ArgIndex( argc, argv, "-stop" ) )
+		return Message( ERR_USAGE );
+
+	if( argc == 1 )
+	{
+		rc = Status();
+		return Message( rc );
+	};
+		
+	if( ArgIndex( argc, argv, "-notlw" ) )
+		ulOptions = NICE_OPTION_NOTLW;
+		
+	if( ArgIndex( argc, argv, "-v" ) )
+		ulOptions |= NICE_OPTION_VERBOSE;
+		
+	if( ArgIndex( argc, argv, "-start" ) )
+	{
+		#ifdef _RT_DEBUG_
+		if( ulOptions & NICE_OPTION_VERBOSE )	
+			rc2 = InitConsole( &hp );
+		#endif
+			
+		rc = StartEngine( ulOptions );
+		if( rc )
+			return Message( rc );
+		
+		#ifdef _RT_DEBUG_
+		if( ulOptions & NICE_OPTION_VERBOSE )	
+			if( rc2 )
+				return Message( rc2 );
+			else
+		
+				rc = RunConsole( hp );	
+		#endif
+    }
+	else if( ArgIndex( argc, argv, "-stop" ) )
+		rc = StopEngine();
+		
+	return Message( rc );
+};
+
+
+LONG ArgIndex( LONG argc, CHAR ** argv, CHAR * arg )
+{
+    while( argc > 1 )
+        if( !strcmp( argv[ argc - 1 ], arg ) )
+            return argc - 1;
+        else
+            argc--;
+
+    return 0;
+};
+
+
+APIRET Message( APIRET rc )
+{
+	CHAR		msg[ 256 ];
+	
+	DosCloseEventSem( gHevInstance );
+	
+	switch( rc )
+	{
+		case NO_ERROR:
+			return rc;
+			
+		case ERR_USAGE:
+			printf( "NICE/2 by Sharon Dagan <idagan@il.ibm.com>\n" \
+			        "usage: niced.exe [-start|-stop] [-notlw] [-v] [-?]\n" );
+			return rc;
+			
+		case ERR_INSTANCE:
+			strcpy( msg, "another niced.exe instance is already running\n" );
+			break;	
+			
+		case ERR_ENGINE_STARTED:
+			strcpy( msg, "niced engine already started\n" );
+			break;
+
+		case ERR_ENGINE_STOPPED:
+			strcpy( msg, "niced engine not started\n" );
+			break;
+
+		case ERR_WINSETHOOK:
+			strcpy( msg, "WinSetHook() faild\n" );
+			break;			
+		
+		default:
+			strcpy( msg, "returned from an OS/2 API call\n" );
+	};
+	
+	printf( "rc = %d %s", rc, msg );
+	
+	return rc;
+};
+
+
+APIRET Status( VOID )
+{
+	APIRET 		rc;
+	HQUEUE		hq;
+	PID			pid;
+	
+	rc = DosOpenQueue( &pid, &hq, NICE_QUEUE_ENGINE );
+	DosCloseQueue( hq );
+	
+	if( rc == NO_ERROR )
+	{
+		printf( "nice status: engine is started\n" );
+		return NO_ERROR;
+	}
+	else if( rc == ERROR_QUE_NAME_NOT_EXIST )
+	{
+		printf( "nice status: engine is stopped\n" );
+		return NO_ERROR;
+	};
+	
+	return rc;
+};
+
+
+APIRET StartEngine( ULONG ulOptions )
+{
+	APIRET 		rc;
+	HQUEUE		hq;
+	PID			pid;
+	
+	HAB			hab;
+	HMQ			hmq;
+	
+	HWND		hwndTlw;
+	
+	/*
+	 *  See if engine is already running.
+	 *
+	 **/
+	
+	rc = DosOpenQueue( &pid, &hq, NICE_QUEUE_ENGINE );
+	if( rc != ERROR_QUE_NAME_NOT_EXIST )
+	{
+		if( rc == NO_ERROR )
+		{
+			DosCloseQueue( hq );
+			return ERR_ENGINE_STARTED;
+		}
+		else 	
+			return rc;
+	};
+	
+	#ifndef _ENGINE_DEBUG_
+	rc = WinInit( &hab, &hmq );
+	if( rc )
+		return rc;
+
+	rc = RunInContext( hab,
+					   HWND_DESKTOP,
+	                   ( PFN ) EngineInputHook,
+	                   MPFROMLONG( NICE_CMD_START ),
+	                   MPFROMLONG( ulOptions ) );
+	if( rc )	
+	{
+		WinTerm( hab, hmq );
+		return rc;
+	};
+	
+	if( !( ulOptions & NICE_OPTION_NOTLW ) )
+	{
+		rc = swlPidToHwnd( 0, &hwndTlw );
+		if( rc )
+		{
+			WinTerm( hab, hmq );
+			return ERR_TLW_HWND_NOT_FOUND;
+		};
+			
+		rc = RunInContext( hab,
+		                   hwndTlw,
+						   ( PFN ) TlwInputHook,
+						   MPFROMLONG( NICE_CMD_START ),
+						   MPFROMLONG( 0 ) );
+	};
+	
+	WinTerm( hab, hmq );
+	#endif
+
+	
+	#ifdef _ENGINE_DEBUG_
+	rc = DosCreateThread( &gTidEngine,
+				  		  ( PFNTHREAD ) Engine,
+						  ulOptions,
+						  CREATE_READY,
+						  0x8000 );
+	#endif
+
+	return rc;
+};	
+
+
+APIRET StopEngine( VOID )
+{
+	APIRET 		rc;
+	ULONG		ulEngineStopped;
+	HQUEUE		hq;
+	PID			pid;
+	PNICERP		pNiceRP;
+	HEV			hevDone;	
+	
+	HAB			hab;
+	HMQ			hmq;
+	
+	HWND		hwndTlw;
+	
+	/*
+	 *  See if engine is already running. Even if the engine is stopped, an attempt
+	 *  is made to unload the NICEDMN.DLL - if the engine has stopped unexpecdly,
+	 *  this DLL stays loaded.
+	 *
+	 **/
+	
+	ulEngineStopped = DosOpenQueue( &pid, &hq, NICE_QUEUE_ENGINE );
+
+	/*
+	 *  tell the engine to gracefully exit
+	 *  prepare a request packet
+	 *
+	 **/
+	
+	if( !ulEngineStopped )
+	{
+        rc = DosAllocSharedMem( ( PPVOID ) &pNiceRP,
+                                NULL,
+                                sizeof( NICERP ),
+                                PAG_COMMIT | OBJ_GETTABLE | PAG_READ | PAG_WRITE );
+        ASSERT( !rc );
+        if( rc )
+            return rc;
+
+        rc = DosCreateEventSem( NULL,
+                                &hevDone,
+                                DC_SEM_SHARED,
+                                FALSE );
+        ASSERT( !rc );
+        if( rc )
+        {	
+        	DosFreeMem( pNiceRP );
+            return rc;
+        };
+
+        pNiceRP->hevDone = hevDone;
+
+        /*
+         *  tell the engine to stop
+         *
+         **/
+
+        rc = DosWriteQueue( hq,
+                            NICE_CMD_STOP,
+                            sizeof( NICERP ),
+                            ( PVOID ) pNiceRP,
+                            0 );
+
+        rc = DosCloseQueue( hq );
+
+        rc = DosWaitEventSem( hevDone, NICE_ENGINE_STOP_TIMEOUT );
+        rc = DosCloseEventSem( hevDone );
+        rc = DosFreeMem( pNiceRP );
+
+        DosSleep( 500 );
+	};
+
+	#ifndef _ENGINE_DEBUG_
+	/*
+	 *  stop the TLW engine
+	 *
+	 **/
+	
+	rc = WinInit( &hab, &hmq );
+	if( rc )
+		return rc;
+
+	rc = swlPidToHwnd( 0, &hwndTlw );
+	if( rc )
+	{
+		WinTerm( hab, hmq );
+		return ERR_TLW_HWND_NOT_FOUND;
+	};
+		
+	rc = RunInContext( hab,
+	                   hwndTlw,
+					   ( PFN ) TlwInputHook,
+	                   MPFROMLONG( NICE_CMD_STOP ),
+	                   MPFROMLONG( 0 ) );
+	
+	if( rc && rc != ERR_TLW_STOPPED )	
+	{
+		WinTerm( hab, hmq );
+		return rc;
+	};
+	
+	/*
+     *  kill the engine thread and unload NICEDMN.DLL
+     *
+     **/
+
+	rc = RunInContext( hab,
+	                   HWND_DESKTOP,
+					   ( PFN ) EngineInputHook,
+	                   MPFROMLONG( NICE_CMD_STOP ),
+	                   MPFROMLONG( 0 ) );
+	
+	WinTerm( hab, hmq );
+	
+	if( ulEngineStopped && rc == ERROR_INVALID_HANDLE )
+		rc = ERR_ENGINE_STOPPED;
+	#endif // _ENGINE_DEBUG_
+
+	
+	#ifdef _ENGINE_DEBUG_
+	rc = DosKillThread( gTidEngine );
+	#endif
+	
+	return rc;
+};
+
+
+/*
+ *  mark this process as PM and initialize
+ *
+ **/
+
+APIRET WinInit( HAB * pHab, HMQ * pHmq )
+{
+	APIRET		rc;
+	PPIB		ppib;
+	PTIB		ptib;
+
+	rc = DosGetInfoBlocks( &ptib, &ppib );
+	ASSERT( !rc );
+	ppib->pib_ultype = SSF_TYPE_PM;
+	
+	*pHab = WinInitialize( 0 );
+	ASSERT( *pHab );
+		
+	*pHmq = WinCreateMsgQueue( *pHab, 0 );
+	if( !( *pHmq ) )
+		return WinGetLastError( *pHab );
+		
+	gHab = *pHab;  // save in global for cleanup
+	gHmq = *pHmq;  //
+
+	return NO_ERROR;
+};
+
+
+APIRET WinTerm( HAB hab, HMQ hmq )
+{
+	APIRET		rc;
+
+	rc = WinDestroyMsgQueue( hmq );
+	if( rc )
+		return rc;
+		
+	rc = WinTerminate( hab );
+	
+	return rc;
+};
+
+
+APIRET RunInContext( HAB hab, HWND hwnd, PFN HookFunc, MPARAM mp1, MPARAM mp2 )
+{
+	APIRET 		rc;
+	ULONG		ulRC;
+	
+	HMODULE		hm;
+	CHAR		pszLoadError[ 256 ];
+	
+	HQUEUE      hqInstHookDone;   // for RC queue
+	REQUESTDATA	rd;
+	PVOID		pBuf;
+	ULONG		cbData;
+	BYTE		bPriority;
+	HEV			hevInstHookDone;
+	
+	/*
+	 *  queue to get the return code from the hook
+	 *
+	 **/
+	
+	rc = DosCreateQueue( &hqInstHookDone,
+						 QUE_FIFO,
+						 NICE_QUEUE_INST_HOOK );
+	ASSERT( !rc );					   		
+	if( rc )
+		return rc;
+	
+	rc = DosCreateEventSem( NULL,
+					   		&hevInstHookDone,
+					   		DC_SEM_SHARED,
+					   		FALSE );
+	ASSERT( !rc );					   		
+	if( rc )
+		return rc;
+	
+	/*
+	 *  load the hook dll
+	 *
+	 **/
+	
+	rc = DosLoadModule( pszLoadError,
+	      		        sizeof( pszLoadError ),
+   				        NICE_MODULE_HOOK,
+   				        &hm );
+	if( rc )
+		return rc;
+	
+	/*
+	 *  register exit list in case of troubles with the hook
+	 *
+	 **/
+	
+	rc = DosExitList( EXLST_ADD, ( PFNEXITLIST ) ContextHookCleanup );
+	ASSERT( !rc );
+	if( rc )
+		return rc;
+	
+	rc = WinSetHook( hab,
+                 	 NULLHANDLE,
+                     HK_INPUT,
+                     ( PFN ) HookFunc,
+                     hm );
+	if( !rc )
+	{
+		DosExitList( EXLST_REMOVE, ( PFNEXITLIST ) ContextHookCleanup );
+		return ERR_WINSETHOOK;
+	};
+		
+	/*
+	 *  trigger the context hook
+	 *
+	 **/
+
+    WinPostMsg( hwnd, WM_NULL, mp1, mp2 );
+
+	/*
+	 *  wait for reply
+	 *
+	 **/
+
+	rc = DosReadQueue( hqInstHookDone,
+				   	   &rd,
+				       &cbData,
+				       ( PPVOID ) &pBuf,
+				       0,
+				       DCWW_NOWAIT,
+				       &bPriority,
+				       hevInstHookDone );	
+				
+	if( rc == 0 )
+		ulRC = rd.ulData;				
+	else
+	{			
+		rc = DosWaitEventSem( hevInstHookDone, NICE_CTXHOOK_TIMEOUT );
+		if( rc == 0 )
+		{
+			rc = DosReadQueue( hqInstHookDone,
+				   	  		   &rd,
+				               &cbData,
+				               ( PPVOID ) &pBuf,
+				               0,
+				               DCWW_NOWAIT,
+				               &bPriority,
+				               hevInstHookDone );	
+
+			ulRC = rd.ulData;
+		}
+		else
+			ulRC = rc;		
+	};
+
+	rc = DosCloseEventSem( hevInstHookDone );	
+	rc = DosCloseQueue( hqInstHookDone );					
+	
+	/*
+	 *  relase the hook
+	 *
+	 **/
+
+    WinReleaseHook( hab,
+                    NULLHANDLE,
+                    HK_INPUT,
+                    ( PFN ) HookFunc,
+                    hm );
+
+    WinBroadcastMsg( HWND_DESKTOP,
+                     WM_NULL,
+                     0,
+                     0,
+                     BMSG_FRAMEONLY | BMSG_POST );
+
+	rc = DosExitList( EXLST_REMOVE, ( PFNEXITLIST ) ContextHookCleanup );
+	
+	rc = DosFreeModule( hm );
+	
+	return ulRC;
+};
+
+
+VOID _System ContextHookCleanup( VOID )
+{
+	HAB			hab;
+	HMODULE		hm;
+	
+	hab = WinInitialize( 0 );  // get the HAB
+	DosQueryModuleHandle( NICE_MODULE_HOOK, &hm );
+	
+    WinReleaseHook( hab,
+                    NULLHANDLE,
+                    HK_INPUT  ,
+                    ( PFN ) gHookFunc,
+                    hm );
+
+    WinBroadcastMsg( HWND_DESKTOP,
+                     WM_NULL,
+                     0,
+                     0,
+                     BMSG_FRAMEONLY | BMSG_POST );
+
+	DosFreeModule( hm );
+	WinDestroyMsgQueue( gHmq );
+	WinTerminate( hab );
+	
+	DosCloseEventSem( gHevInstance );
+	
+	DosExitList( EXLST_EXIT, ( PFNEXITLIST ) NULL );
+};
+
+
+#ifdef _RT_DEBUG_
+APIRET InitConsole( HPIPE * pHp )
+{
+	APIRET		rc;
+
+	rc = DosCreateNPipe( NICE_PIPE_CONSOLE,
+						 pHp,
+						 NP_INHERIT | NP_ACCESS_INBOUND,
+						 NP_WAIT | 0x04, // 4 instances can connect
+						 4096,
+						 4096,
+						 0 );
+	gHpConsole = *pHp;						
+	
+	return rc;
+};
+
+
+APIRET RunConsole( HPIPE hp )
+{
+	APIRET		rc;
+	CHAR		pBuf[ 4096 ];
+	ULONG		ulRead;
+
+	rc = DosConnectNPipe( hp );
+	if( rc )
+		return rc;
+
+	rc = ( ULONG ) signal( SIGBREAK, ConsoleCleanup );
+	rc = ( ULONG ) signal( SIGINT, ConsoleCleanup );
+	rc = ( ULONG ) signal( SIGTERM, ConsoleCleanup );
+
+	printf( "NICE/2 verbose mode. Press CTRL-C to end\n" );
+	
+	while( TRUE )
+	{
+		rc = DosRead( hp,
+					  pBuf,
+					  sizeof( pBuf ),
+					  &ulRead );
+					
+		if( rc || !ulRead )
+			break;
+			
+		printf( "%s\n", pBuf );
+		memset( pBuf, 0, sizeof( pBuf ) );					
+	};
+	
+	rc = StopEngine();	
+	DosDisConnectNPipe( hp );	
+
+	rc = ( ULONG ) signal( SIGBREAK, SIG_DFL );
+	rc = ( ULONG ) signal( SIGINT, SIG_DFL );
+	rc = ( ULONG ) signal( SIGTERM, SIG_DFL );
+	
+	return NO_ERROR;
+};
+
+
+VOID ConsoleCleanup( INT sig )
+{
+	#ifdef _ENGINE_DEBUG_
+	APIRET		rc;
+	#endif
+
+	#ifdef _ENGINE_DEBUG_
+	rc = StopEngine();
+	#endif
+
+	DosDisConnectNPipe( gHpConsole );
+};
+#endif

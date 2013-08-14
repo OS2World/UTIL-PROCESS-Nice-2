@@ -1,0 +1,12 @@
+/*
+ *  By Sharon Dagan, IBM Israel <idagan@il.ibm.com>
+ *  (C) 1998, All Rights Reserved, Israel.
+ *
+ *  $Date$
+ *  $Id$
+ *
+ **/
+
+rcinclude task_view.rc
+
+

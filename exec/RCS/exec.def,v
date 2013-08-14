@@ -1,0 +1,28 @@
+head	1.1;
+access;
+symbols;
+locks
+	idagan:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	99.02.13.18.23.27;	author idagan;	state Exp;
+branches;
+next	;
+
+
+desc
+@Created
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@DESCRIPTION '@@#idagan@@il.ibm.com:0.06#@@NICE/2 NICEX'
+
+	
+@

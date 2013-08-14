@@ -1,0 +1,9 @@
+LIBRARY 		INITGLOBAL
+DESCRIPTION 	'@#idagan@il.ibm.com:0.06#@NICE/2 Engine Install Hook'
+STACKSIZE 		0x8000
+DATA 			SINGLE SHARED
+PROTMODE
+
+EXPORTS
+	EngineInputHook		@1
+

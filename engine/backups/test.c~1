@@ -1,0 +1,31 @@
+/*
+ *  Project:
+ *  Description:
+ *
+ *  By Sharon Dagan, idagan@il.ibm.com
+ *  (C) copyright 1998, all rights reserved to IBM Israel
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#define INCL_DOS
+#define INCL_WIN
+#include <os2.h>
+#include "util.h"
+
+
+int main()
+{
+    APIRET		rc;
+
+	printf( "%s\n", my_strrchr( "d:\\os2\\pmshell.exe", 'd' ) );
+
+    return rc;
+	
+};				
+				
+
+				
+					

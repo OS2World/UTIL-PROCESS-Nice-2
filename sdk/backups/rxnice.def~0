@@ -1,0 +1,15 @@
+DESCRIPTION	'@#idagan@il.ibm.com:0.04#@NICE/2 REXX Interface'
+
+IMPORTS
+	DosQuerySysState = DOSCALL1.368
+	NiceSetPriority  = NICE.1
+	NiceStatus       = NICE.2
+
+EXPORTS
+	RXNICELOADFUNCS	  = RxNiceLoadFuncs
+	RXNICEDROPFUNCS	  = RxNiceDropFuncs
+	RXNICESTATUS      = RxNiceStatus
+	RXNICESETPRIORITY = RxNiceSetPriority
+	RXNICEPS		  = RxNicePS
+	RXNICEMYPID		  = RxNiceMyPID
+	

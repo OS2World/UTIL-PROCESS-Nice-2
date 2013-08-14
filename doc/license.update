@@ -1,0 +1,92 @@
+Return-Path: <sharon_dagan@il.ibm.com>
+Delivered-To: dave_yeo@ncoldns.com
+Received: from psmtp.com (exprod6mx124.postini.com [64.18.1.31])
+	by generation.lgisp.net (Postfix) with SMTP id E9D94B883A
+	for <dave_yeo@paralynx.com>; Sat, 18 Jun 2005 04:49:21 -0700 (PDT)
+Received: from source ([195.212.29.153]) (using TLSv1) by exprod6mx124.postini.com ([64.18.5.10]) with SMTP;
+	Sat, 18 Jun 2005 04:49:20 PDT
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate4.de.ibm.com (8.12.10/8.12.10) with ESMTP id j5IBnJa6154044
+	for <dave_yeo@paralynx.com>; Sat, 18 Jun 2005 11:49:20 GMT
+Received: from d12av04.megacenter.de.ibm.com (d12av04.megacenter.de.ibm.com [9.149.165.229])
+	by d12nrmr1607.megacenter.de.ibm.com (8.12.10/NCO/VER6.6) with ESMTP id j5IBnJEI080896
+	for <dave_yeo@paralynx.com>; Sat, 18 Jun 2005 13:49:19 +0200
+Received: from d12av04.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av04.megacenter.de.ibm.com (8.12.11/8.13.3) with ESMTP id j5IBnJO3028725
+	for <dave_yeo@paralynx.com>; Sat, 18 Jun 2005 13:49:19 +0200
+Received: from d12mc101.megacenter.de.ibm.com (d12mc101.megacenter.de.ibm.com [9.149.170.59])
+	by d12av04.megacenter.de.ibm.com (8.12.11/8.12.11) with ESMTP id j5IBnIGj028720
+	for <dave_yeo@paralynx.com>; Sat, 18 Jun 2005 13:49:18 +0200
+In-Reply-To: <20050618041123.5355BB6CA9@generation.lgisp.net>
+Subject: Re: [os2-nice] Source
+To: "Dave Yeo" <dave_yeo@paralynx.com>
+X-Mailer: Lotus Notes Release 6.5.3 September 14, 2004
+Message-ID: <OFD34D90A2.C60EEA14-ONC2257024.00408AD6-C2257024.0040E993@il.ibm.com>
+From: Sharon Dagan <sharon_dagan@il.ibm.com>
+Date: Sat, 18 Jun 2005 14:49:01 +0300
+X-MIMETrack: Serialize by Router on D12MC101/12/M/IBM(Release 6.53HF247 | January 6, 2005) at
+ 18/06/2005 14:49:17
+MIME-Version: 1.0
+Content-type: text/plain; charset=US-ASCII
+X-UIDL: V^f!!k<&!!;`p!!_j="!
+
+Hi, indeed I'm the sole copyright holder.
+I hereby relicense the Nice/2 under The Apache Software Foundation license.
+
+Cheers,
+--
+Sharon Dagan
+Chief Architect, IBM Global Services, Israel
+Solution, System and Application Design, Implementation and Integration
+Tel/Fax: +972-3-9188776,  Mobile: +972-52-2554776
+e-Mail: dev@null.com
+
+Making Linux user friendly is easier than debugging Windows :-)
+
+
+
+                                                                           
+             "Dave Yeo"                                                    
+             <dave_yeo@paralyn                                             
+             x.com>                                                     To 
+             Sent by:                  "os2-nice@yahoogroups.com"          
+             os2-nice@yahoogro         <os2-nice@yahoogroups.com>          
+             ups.com                                                    cc 
+                                                                           
+                                                                   Subject 
+             18/06/2005 08:10          Re: [os2-nice] Source               
+                                                                           
+                                                                           
+             Please respond to                                             
+             os2-nice@yahoogro                                             
+                  ups.com                                                  
+                                                                           
+                                                                           
+
+
+
+
+On Fri, 17 Jun 2005 10:44:48 -0700, Steven Levine wrote:
+
+>In <20050617154535.22BF3B71FE@generation.lgisp.net>, on 06/17/05
+>   at 08:45 AM, "Dave Yeo" <dave_yeo@paralynx.com> said:
+>
+>>Does anyone have the latest source for nice? The latest version I have
+>>here is dated 04-10-99 and includes the SDK but no other source Dave
+>
+>I have nice-os2-v50.zip from Hobbes which is newer and contains source.
+>Is this the one you are looking for?
+
+No, nice-os2-v50.zip makes OS/2 (and winos2) look nicer. Nice/2 works sorta
+like the
+Unix command nice. V4 is on Hobbes.
+(http://hobbes.nmsu.edu/pub/os2/util/process/nice004.zip). Also used as a
+plugin to
+watchcat. (http://hobbes.nmsu.edu/pub/os2/util/process/wnice.zip) I have
+ver 7 or so
+here but no source and it's GPL so no distributing allowed.
+Sharon are you the sole copyright holder? It appears so in the files I
+have. If so could
+you relicense it to allow me to redistribute it without the source if I
+can't find the source.
+Dave

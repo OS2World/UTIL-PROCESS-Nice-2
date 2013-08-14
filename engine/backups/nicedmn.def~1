@@ -1,0 +1,12 @@
+LIBRARY 		INITGLOBAL
+DESCRIPTION 	'@#idagan@il.ibm.com:0.05#@NICE/2 Engine'
+STACKSIZE 		0x8000
+DATA 			SINGLE SHARED
+PROTMODE
+EXPORTS
+	Engine 				 @1
+	TlwWinProc			 @2
+	gHmEngine			 @3
+	gTidEngine			 @4
+	gHwndTlwCntr		 @5
+	gOriginalTlwWinProc  @6

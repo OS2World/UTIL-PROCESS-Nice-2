@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="StarOffice/5.0 (OS2)">
+	<META NAME="AUTHOR" CONTENT="Sharon Dagan">
+	<META NAME="CREATED" CONTENT="19981227;15251565">
+	<META NAME="CHANGEDBY" CONTENT="Sharon Dagan">
+	<META NAME="CHANGED" CONTENT="19981229;16550345">
+	<STYLE>
+	<!--
+		P.text-body-indent { margin-left: 0.50cm }
+	-->
+	</STYLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff" BACKGROUND="img/background.gif">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=54*>
+	<COL WIDTH=9*>
+	<COL WIDTH=167*>
+	<COL WIDTH=26*>
+	<TR VALIGN=TOP>
+		<TH WIDTH=21%>
+			<IMG SRC="img/os2warp.gif" NAME="Graphic1" ALIGN=LEFT WIDTH=141 HEIGHT=46 BORDER=0><BR CLEAR=LEFT>
+			<HR>
+			<P ALIGN=CENTER STYLE="border-top: none; border-bottom: 1.10pt double #808080; border-left: none; border-right: none; padding: 0.00cm; line-height: 100%">
+			<SPAN STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">Visit
+			the NICE/2 <A HREF="http://www.geocities.com/Nashville/6525/os2.html">Homepage!</A></FONT></FONT></SPAN></P>
+			<P><A HREF="mailto:idagan@il.ibm.com"><IMG SRC="img/email.gif" NAME="Graphic15" ALIGN=BOTTOM WIDTH=96 HEIGHT=100 BORDER=0></A></P>
+		</TH>
+		<TH WIDTH=4%>
+			<P><BR><BR>
+			</P>
+			<P><BR><BR>
+			</P>
+			<P><BR><BR>
+			</P>
+			<P><BR>
+			</P>
+		</TH>
+		<TH WIDTH=65%>
+			<P ALIGN=LEFT><FONT COLOR="#0000ff"><FONT FACE="Tms Rmn"><FONT SIZE=4 STYLE="font-size: 16pt">NICE/2</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans"><FONT COLOR="#0000ff">By
+			Sharon Dagan &lt;<A HREF="mailto:idagan@il.ibm.com">idagan@il.ibm.com</A>&gt;</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><BR><BR>
+			</P>
+			<P ALIGN=LEFT><FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">What
+			is NICE/2?</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">Have
+			you ever started a long XCOPY command that ate too much CPU? Have
+			you ever wanted to make Netscape/2 more responsive? NICE/2 is here
+			to rescue. With NICE/2 you can dynamically change the priority of
+			many processes in OS/2. As opposed to programs such as SPE that
+			start a process in a given priority, NICE/2 enables you to change
+			the priority of processes and threads <FONT COLOR="#ff0000">after</FONT>
+			they have been started.</FONT></FONT></P>
+			<P STYLE="border-top: none; border-bottom: 1.10pt double #808080; border-left: none; border-right: none; padding: 0.00cm">
+			<FONT SIZE=1 STYLE="font-size: 6pt"><IMG SRC="./img/pinky.gif" NAME="Graphic3" ALIGN=BOTTOM WIDTH=60 HEIGHT=60 BORDER=0><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">Jump
+			to [<A HREF="#instaltion">Installation</A>] [<A HREF="#basic">Basic</A>]
+			[<A HREF="#advanced">Advanced</A>] [<A HREF="#utilities">Utilities</A>]
+			[<A HREF="#sdk">SDK</A>] [<A HREF="#known_problems">Known
+			Problems</A>] [<A HREF="#error_codes">Error codes</A>]</FONT></FONT></FONT></P>
+			<HR>
+			<P ALIGN=LEFT><A NAME="installation"></A><FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">Installation</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">Simply
+			put \nice\dll in your LIBPATH and \nice\bin in your PATH.</FONT></FONT></P>
+			<P ALIGN=LEFT><BR><BR>
+			</P>
+			<HR>
+			<P ALIGN=LEFT><A NAME="basic"></A><FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">Basic</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">NICE/2
+			is divided into three components: Server, GUI client and command
+			line client. To start using NICE/2, the server must be running. To
+			start the server, issue the command:</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT COLOR="#ff9966"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B>niced.exe
+			-start</B></FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">This
+			will attempt to start the server. If everything went ok, <B><FONT FACE="WarpSans">niced.exe</FONT></B>
+			quietly returns. If the server could not be started, niced.exe
+			reports the <A HREF="#error_codes">error</A> and aborts the
+			operation. To find out if the server is running or not, issue:</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT COLOR="#ff9966"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">niced.exe</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">This
+			will tell you if the server is running or not. To stop the server,
+			issue:</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT COLOR="#ff9966"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">niced.exe
+			-stop</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">This
+			will attempt to stop the server. This might take a few seconds. If
+			the server was successfully stopped, niced.exe quietly returns. If
+			an error occurred while stopping the server, niced.exe reports the
+			<A HREF="#error_codes">error</A> but still stops the server.</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">If
+			you intend to use NICE/2 a lot, start the server in your
+			STARTUP.CMD or STARTUP folder. NICE/2 takes only a fraction of
+			OS/2 resources, so there's really no good reason <A HREF="#known_problems">against</A>
+			it.</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">After
+			the server has been started, use either the GUI or the command
+			line to interact with NICE/2. Lets say you want to change the
+			priority of Netscape and make it a bit more responsive. </FONT></FONT>
+			</P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><BR><BR>
+			</P>
+			<HR>
+			<P ALIGN=LEFT><A NAME="utilities"></A><FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">Utilites</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">NICE/2
+			is provided with several utilites to ease the use of NICE/2. The
+			utlities provided are not part of the core NICE/2 build tree and
+			don't use any of the NICE/2 API's - they can be used
+			'stand-alone'.</FONT></FONT></P>
+            <P ALIGN=LEFT STYLE="margin-left: 1.27cm">			
+			<FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B><IMG SRC="./img/red_ball.gif" NAME="Graphic13" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><FONT COLOR="#000000">
+			</FONT><FONT COLOR="#ff9966">niceps.exe [-p PID] </FONT><FONT COLOR="#000000">-
+			use this utility to report process and thread information. When
+			invoked without switches, niceps.exe reports the list of currenlty
+			running processes in the system. When used with the '-p' switch,
+			niceps.exe reports thread information for the specified process.</FONT></B></FONT></FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm">	
+			<IMG SRC="./img/red_ball.gif" NAME="Graphic14" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans"><FONT COLOR="#ff9966">
+			nicex.exe -c CLASS -d DELTA COMMAND [...]</FONT><FONT COLOR="#000000">
+			- use this utility to start a process in a certain priority. CLASS
+			and DELTA values are the same as the <A HREF="http://xx/">nice.exe</A>
+			command.</FONT></FONT></FONT></B></P>
+			<P CLASS="text-body-indent" ALIGN=LEFT STYLE="margin-left: 5.27cm">
+			<BR><BR>
+			</P>
+			<HR>
+			<P ALIGN=LEFT><A NAME="sdk"></A><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="../../../../../apps/internet/myhp/new.gif" NAME="Graphic12" ALIGN=BOTTOM WIDTH=25 HEIGHT=14 BORDER=0>
+			<FONT COLOR="#0000ff">SDK for C/C++ and REXX</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">NICE/2
+			is provided with a SDK for C/C++ and REXX. Use this SDK to extend
+			NICE/2 or integrate it with your own programs and scripts. The
+			C/C++ SDK has been built with VisualAge C++ v3.0 but should work
+			with EMX/GCC too. The C/C++ SDK includes head er and lib files
+			(nice.h, nice.lib) and a sample program (sample.c, sample.mak).
+			The C/C++ SDK includes the following functions:</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm">	
+			<FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B><IMG SRC="./img/red_ball.gif" NAME="Graphic2" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0>
+			<FONT COLOR="#ff9966">NiceStatus()</FONT> - see if the NICE/2
+			server is running</B></FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT COLOR="#000000"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B><IMG SRC="./img/red_ball.gif" NAME="Graphic4" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0>
+			<FONT COLOR="#ff9966">NiceSetPriority( pid, tid, class, delta ) </FONT>-
+			set the priority of a process and/or thread</B></FONT></FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT COLOR="#000000"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B><IMG SRC="./img/red_ball.gif" NAME="Graphic5" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0>
+			<FONT COLOR="#ff9966">NiceIOCtl( cmd, param1, param2 )</FONT> -
+			generic way to contanct the NICE/2 server</B></FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">NICE/2
+			also includes a REXX SDK to ease integration of NICE/2 with
+			scripts. The NICE/2 REXX SDK is comprehansive and includes the
+			NICE/2 REXX DLL (rxnice.dll) and two sample files (sample1.cmd,
+			sample2.cmd). The REXX SDK includes the following functions:</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic6" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B>
+			</B><FONT COLOR="#ff9966">RxNiceLoadFuncs()</FONT> and
+			<FONT COLOR="#ff9966">RxNiceDropFuncs()</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic7" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B>
+			</B><FONT COLOR="#ff9966">RxNiceStatus()</FONT> - wrapper for
+			NiceStatus</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic8" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B>
+			</B><FONT COLOR="#ff9966">RxNiceSetPriority( pid, tid, class,
+			delta )</FONT> - wrapper for NiceSetPriority</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic9" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B>
+			</B><FONT COLOR="#ff9966">RxNiceIOCtl( cmd, param1, param2 )</FONT>
+			- wrapper for NiceIOCtl</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic10" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B>
+			</B><FONT COLOR="#ff9966">RxNicePS()</FONT> - get a list of all
+			processes and thread information</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic11" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0><B>
+			</B><FONT COLOR="#ff9966">RxNiceMyPID()</FONT> - returns the PID
+			of this process</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><BR><BR>
+			</P>
+			<HR>
+			<P ALIGN=LEFT><FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt">Known
+			Problems</FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">If
+			you have a problem not listed here and you susspect a bug, please
+			take a few minutes and download the </FONT></FONT><A HREF="http://nice_debug.zip/"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">debug
+			version</FONT></FONT></A><FONT SIZE=2 STYLE="font-size: 9pt"><FONT FACE="WarpSans">
+			of NICE/2. With this version, the NICE/2 server writes a detailed
+			log file that could help you (and me) diagnose the problem. Here
+			is a list of known problems:</FONT></FONT></P>
+			<P ALIGN=LEFT STYLE="margin-left: 1.27cm"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><IMG SRC="./img/red_ball.gif" NAME="Graphic16" ALIGN=BOTTOM WIDTH=12 HEIGHT=12 BORDER=0>
+			When a VDM (DOS window and Win-OS/2 window) is brought to the
+			foreground, OS/2 alters the priority of the process back to
+			(usualy) Regular 0.</FONT></FONT></P>
+			<P ALIGN=LEFT><BR><BR>
+			</P>
+			<HR>
+		</TH>
+		<TH WIDTH=10%>
+			<P><BR>
+			</P>
+		</TH>
+	</TR>
+</TABLE>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=54*>
+	<COL WIDTH=9*>
+	<COL WIDTH=17*>
+	<COL WIDTH=58*>
+	<COL WIDTH=92*>
+	<COL WIDTH=26*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=21%>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=4%>
+			<P><BR>
+			</P>
+		</TD>
+		<TD COLSPAN=3 WIDTH=65%>
+			<P ALIGN=LEFT><A NAME="error_codes"></A><FONT COLOR="#0000ff"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Error
+			Codes</B></FONT></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT COLOR="#000000"><FONT FACE="WarpSans"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Some
+			of the errors NICE/2 returns:</B></FONT></FONT></FONT></P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=21%>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=7%>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">0</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-1</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-2</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-3</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-4</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-5</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-6</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">-7</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">303</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">304</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">307</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">309</FONT></FONT></P>
+			<P CLASS="text-body-indent" ALIGN=RIGHT STYLE="margin-left: 0.00cm">
+			<FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">640</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=22%>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">NO_ERROR</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_USAGE</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_INSTANCE</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_ENGINE_STARTED</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_ENGINE_STOPPED</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_WINSETHOOK</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_NOT_PM_PROCESS</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERR_HWND_NOT_FOUND</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERROR_INVALID_PROCID</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERROR_INVALID_PDELTA</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERROR_INVALID_PCLASS</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERROR_INVALID_THREADID</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">ERROR_TIMEOUT</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=36%>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">no
+			error</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">check
+			swithces</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">niced.exe
+			already running</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">NICE/2
+			server already running</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">NICE/2
+			server not started</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="System VIO">internal
+			error - please <A HREF="mailto:idagan@il.ibm.com">report</A></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">PID
+			is not a PM process</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="System VIO">internal
+			error - please <A HREF="mailto:idagan@il.ibm.com">report</A></FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">invalid
+			PID ('-p')</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">invalid
+			DELTA ('-d')</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">invalid
+			CLASS ('-c')</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">invalid
+			TID ('-t')</FONT></FONT></P>
+			<P ALIGN=LEFT><FONT FACE="System VIO"><FONT SIZE=2 STYLE="font-size: 11pt">timeout
+			expired</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=10%>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

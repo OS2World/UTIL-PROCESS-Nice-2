@@ -1,0 +1,48 @@
+/*
+ *  Project: NICE/2
+ *
+ *  By Sharon Dagan, idagan@il.ibm.com
+ *  (C) copyright 1998, all rights reserved to IBM Israel
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#define INCL_WIN
+#include <os2.h>
+#include "menu.h"
+
+MENU IDM_PRIORITY_MENU PRELOAD
+BEGIN
+	MENUITEM "Increase\a~+", IDM_INCREASE_DELTA, MIS_TEXT
+	MENUITEM "Decrease\a~-", IDM_DECREASE_DELTA, MIS_TEXT
+	
+	MENUITEM "", -1, MIS_SEPARATOR
+	
+	SUBMENU  "Make ~Idle", IDM_IDLE_MENU
+	BEGIN
+		MENUITEM "~Low",    IDM_IDLE_LOW,    MIS_TEXT
+		MENUITEM "~Medium", IDM_IDLE_MEDIUM, MIS_TEXT
+		MENUITEM "~High",   IDM_IDLE_HIGH,   MIS_TEXT
+	END
+
+	SUBMENU  "Make ~Regular", IDM_REG_MENU
+	BEGIN
+		MENUITEM "~Low",    IDM_REG_LOW,    MIS_TEXT
+		MENUITEM "~Medium", IDM_REG_MEDIUM, MIS_TEXT
+		MENUITEM "~High",   IDM_REG_HIGH,   MIS_TEXT
+	END
+
+	SUBMENU  "Make ~Server", IDM_FGS_MENU
+	BEGIN
+		MENUITEM "~Low",    IDM_FGS_LOW,    MIS_TEXT
+		MENUITEM "~Medium", IDM_FGS_MEDIUM, MIS_TEXT
+		MENUITEM "~High",   IDM_FGS_HIGH,   MIS_TEXT
+	END
+	
+	MENUITEM "", -1, MIS_SEPARATOR
+	
+	MENUITEM "~Undo", IDM_UNDO, MIS_TEXT
+END
+

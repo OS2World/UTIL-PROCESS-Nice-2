@@ -1,0 +1,42 @@
+/*
+ *  By Sharon Dagan, IBM Israel <idagan@il.ibm.com>
+ *  (C) 1998, All Rights Reserved, Israel.
+ *
+ *  $Date$
+ *  $Id$
+ *
+ **/
+
+#include "task_view.h"
+
+ICON IDC_PLUS   "plus.ico"
+ICON IDC_MINUS  "minus.ico"
+
+MENU IDM_CLASSMENU
+BEGIN
+	MENUITEM "~Show",      1, MIS_TEXT
+	MENUITEM "~Minimized", 1, MIS_TEXT
+	MENUITEM "~Help",	   1, MIS_TEXT
+	MENUITEM "",           1, MIS_SEPARATOR
+	MENUITEM "~Tile",      1, MIS_TEXT
+	MENUITEM "C~ascade",   1, MIS_TEXT
+	MENUITEM "",           1, MIS_SEPARATOR
+	SUBMENU  "~Close", 2
+	BEGIN
+	    MENUITEM "~Close",			3, MIS_TEXT
+	    MENUITEM "DosKill~Process",	4, MIS_TEXT
+	    MENUITEM "DosKill~Thread",  5, MIS_TEXT
+	    MENUITEM "~WatchCat",       6, MIS_TEXT
+	    MENUITEM "~XFree86/2 Kill", 7, MIS_TEXT				
+	END
+	SUBMENU  "~Priority", 3,
+	BEGIN
+		MENUITEM "~Increase +1", 8, MIS_TEXT
+		MENUITEM "~Decrease -1", 9, MIS_TEXT
+			
+		
+		
+	END
+END
+
+

@@ -1,0 +1,5 @@
+DESCRIPTION '@#idagan@il.ibm.com:0.06#@NICE/2 NICEPS'
+
+IMPORTS
+	DosQuerySysState = DOSCALL1.368
+	

@@ -1,0 +1,40 @@
+
+    NICE/2
+    By Sharon Dagan <idagan@il.ibm.com>
+
+
+    v0.05 (25/12/1998 18:30)
+          * Added a GUI - NICE/2 now adds 'Priority' menu to the Task List
+            Window's context menu.
+          * Added verbose mode '-v' to ease debugging.
+          * Added NICEX to start process in a given priority.
+
+    v0.04 (18/12/1998 16:00)
+          * Minor change to the engine so NICE/2 wont hold up OS/2 shutdown.
+
+    v0.03 (16/12/1998 12:30)
+          * Engine redesign (again). Engine now runs as a thread within the
+            PM process, and listens to it's own queue, no need to use Win*
+            APIs to contact the engine.
+          * Engine reports back rc codes.
+          * Engine posts event semaphore to indicate end of request.
+          * PIDs are checked before any other work is done.
+          * If TID is given, the PID type is checked (must be PM).
+          * Better error reporting.
+          * Added RXNICE.DLL - a REXX interface into NICE/2.
+          * Added NICE.H and NICE.LIB for C developers.
+
+    v0.02 (31/07/1998 18:50)
+          * Complete redesign of the niced engine. Nice/2 is now able to
+            change the priority of selected single thread within a PM process.
+          * Added NICEPS to report priorities.
+          * Improved debug version of NICE/2.
+          * Nice/2 now reports detailed information on many possible errors.
+
+    v0.01 beta 2 (30/07/1998 16:30)
+          * Bug fix - could not get the TLW HWND in non-US-English versions
+            of OS/2.
+
+    v0.01 beta 1 (21/07/1998 02:00)
+          * First public release.
+

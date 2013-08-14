@@ -1,0 +1,174 @@
+head	1.1;
+access;
+symbols;
+locks
+	idagan:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	99.02.13.18.24.10;	author idagan;	state Exp;
+branches;
+next	;
+
+
+desc
+@created
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+ *  Project: NICE/2
+ *
+ *  By Sharon Dagan, idagan@@il.ibm.com
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#define INCL_DOS
+#define INCL_WIN
+#include <os2.h>
+#include "globals.h"
+
+
+extern VOID     _System Engine( ULONG arg ); 		
+extern MRESULT  _System TlwWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern HMODULE  gHmEngine;
+extern TID      gTidEngine;			
+extern HWND     gHwndTlwCntr;
+extern PFNWP    gOriginalTlwWinProc;	 			
+
+
+/*
+ *  Globals to save stack space as this hook is running
+ *  with someones else's stack space.
+ *
+ **/
+
+APIRET			rc;
+ULONG 			ulSuccess;
+HQUEUE			hq; 					
+PID				pid;
+UCHAR    		pszLoadError[ 256 ];
+HMODULE			hm;
+HQUEUE			hqInstHookDone;
+
+
+VOID ReportRC( ULONG );
+
+
+/*
+ *  When we enter here, we are in PM context
+ *
+ **/
+
+BOOL _System EngineInputHook( HAB hab, PQMSG pqmsg, ULONG fs )
+{
+    if( pqmsg->msg == WM_NULL )
+    {
+    	switch( LONGFROMMP( pqmsg->mp1 ) )
+    	{
+    		case NICE_CMD_START:
+    		
+    			/*
+    			 *  load the engine module (NICEDMN.DLL) and start the engine thread.
+    			 *  save the HMODULE (used within the engine) and TID (used to kill
+    			 *  the thread).
+    			 *
+    			 **/
+    		
+    		    ulSuccess = DosLoadModule( pszLoadError,
+    		                               sizeof( pszLoadError ),
+    		                               NICE_MODULE_ENGINE,
+    		                               &gHmEngine );
+				if( ulSuccess )
+				{
+					ReportRC( ulSuccess );
+					break;
+				};
+				
+				ulSuccess = DosCreateThread( &gTidEngine,
+									  		( PFNTHREAD ) Engine,
+									  		( ULONG ) pqmsg->mp2,
+									  		CREATE_SUSPENDED,
+									  		0x8000 );
+				if( ulSuccess )
+				{
+					ReportRC( ulSuccess );
+					break;
+				};
+					
+				ulSuccess = DosSetPriority( PRTYS_THREAD,
+											PRTYC_FOREGROUNDSERVER,
+			    							PRTYD_MINIMUM,
+											gTidEngine );
+				if( ulSuccess )
+				{
+					ReportRC( ulSuccess );
+					break;
+				};
+											
+				ulSuccess = DosResumeThread( gTidEngine );
+				
+				ReportRC( ulSuccess );
+				break;
+				
+    		case NICE_CMD_STOP:
+    		
+    			ulSuccess = DosQueryModuleHandle( NICE_MODULE_ENGINE, &hm );
+            	ulSuccess = DosFreeModule( hm );
+            	
+            	if( ulSuccess )
+            	{
+            		ERRORBEEP( 100 );
+            		DosSleep( NICE_UNLOAD_TIMEOUT );
+            		
+            		DosKillThread( gTidEngine );
+            		DosSleep( NICE_UNLOAD_TIMEOUT );
+            		
+            		ulSuccess = DosFreeModule( hm );
+            	};
+            		
+            	ReportRC( ulSuccess );
+            	break;
+        };
+
+        return TRUE;
+    };
+
+    return FALSE;
+};
+
+
+/*
+ *  report the return code
+ *
+ **/
+
+VOID ReportRC( ULONG RetCode )
+{
+	rc = DosOpenQueue( &pid,
+	                   &hqInstHookDone,
+	                   NICE_QUEUE_INST_HOOK );
+	if( rc )
+		return;
+
+   	rc = DosWriteQueue( hqInstHookDone,
+	               		RetCode,
+	               		sizeof( ULONG ),
+	               		0,
+                		0 );
+	if( rc )
+		return;
+					
+	DosCloseQueue( hqInstHookDone );
+};
+
+@

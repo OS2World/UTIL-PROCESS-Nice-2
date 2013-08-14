@@ -1,0 +1,205 @@
+/*
+ *  Project: NICE/2
+ *
+ *  By Sharon Dagan, idagan@il.ibm.com
+ *  (C) copyright 1998, all rights reserved to IBM Israel
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#define INCL_DOS
+#define INCL_WIN
+#include <os2.h>
+#include "globals.h"
+
+
+extern VOID     _System Engine( ULONG arg ); 		
+extern MRESULT  _System TlwWinProc( HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2 );
+extern HMODULE  gHmEngine;
+extern TID      gTidEngine;			
+extern HWND     gHwndTlwCntr;
+extern PFNWP    gOriginalTlwWinProc;	 			
+
+
+/*
+ *  Globals to save stack space as this hook is running
+ *  with someones else's stack space.
+ *
+ **/
+
+APIRET			rc;
+ULONG 			ulSuccess;
+HQUEUE			hq; 					
+PID				pid;
+UCHAR    		pszLoadError[ 256 ];
+HMODULE			hm;
+HQUEUE			hqInstHookDone;
+
+
+VOID ReportRC( ULONG );
+
+
+/*
+ *  When we enter here, we are in PM context
+ *
+ **/
+
+BOOL _System EngineInputHook( HAB hab, PQMSG pqmsg, ULONG fs )
+{
+    if( pqmsg->msg == WM_NULL )
+    {
+    	switch( LONGFROMMP( pqmsg->mp1 ) )
+    	{
+    		case NICE_CMD_START:
+    		
+    			/*
+    			 *  load the engine module (NICEDMN.DLL) and start the engine thread.
+    			 *  save the HMODULE (used within the engine) and TID (used to kill
+    			 *  the thread).
+    			 *
+    			 **/
+    		
+    		    ulSuccess = DosLoadModule( pszLoadError,
+    		                               sizeof( pszLoadError ),
+    		                               NICE_MODULE_ENGINE,
+    		                               &gHmEngine );
+				if( ulSuccess )
+				{
+					ReportRC( ulSuccess );
+					break;
+				};
+				
+				ulSuccess = DosCreateThread( &gTidEngine,
+									  		( PFNTHREAD ) Engine,
+									  		( ULONG ) pqmsg->mp2,
+									  		CREATE_SUSPENDED,
+									  		0x8000 );
+				if( ulSuccess )
+				{
+					ReportRC( ulSuccess );
+					break;
+				};
+					
+				ulSuccess = DosSetPriority( PRTYS_THREAD,
+											PRTYC_IDLETIME,
+			    							PRTYD_MINIMUM + 1,
+											gTidEngine );
+				if( ulSuccess )
+				{
+					ReportRC( ulSuccess );
+					break;
+				};
+											
+				ulSuccess = DosResumeThread( gTidEngine );
+				
+				ReportRC( ulSuccess );
+				break;
+				
+    		case NICE_CMD_STOP:
+    		
+    			ulSuccess = DosQueryModuleHandle( NICE_MODULE_ENGINE, &hm );
+            	ulSuccess = DosFreeModule( hm );
+            	
+            	if( ulSuccess )
+            	{
+            		ERRORBEEP( 100 );
+            		DosSleep( NICE_UNLOAD_TIMEOUT );
+            		
+            		DosKillThread( gTidEngine );
+            		DosSleep( NICE_UNLOAD_TIMEOUT );
+            		
+            		ulSuccess = DosFreeModule( hm );
+            	};
+            		
+            	ReportRC( ulSuccess );
+            	break;
+        };
+
+        return TRUE;
+    };
+
+    return FALSE;
+};
+
+
+/*
+ *  When we enter here, we are in Task List Window context
+ *
+ **/
+
+BOOL _System TlwInputHook( HAB hab, PQMSG pqmsg, ULONG fs )
+{
+    if( pqmsg->msg == WM_NULL )
+    {
+    	switch( LONGFROMMP( pqmsg->mp1 ) )
+    	{
+			case NICE_CMD_START:
+			
+				if( ( PFNWP ) WinQueryWindowPtr( pqmsg->hwnd, QWP_PFNWP ) == TlwWinProc )
+				{
+					ReportRC( ERR_TLW_STARTED );
+					break;
+				};
+				
+				gOriginalTlwWinProc = WinSubclassWindow( pqmsg->hwnd, TlwWinProc );
+				if( gOriginalTlwWinProc == NULL )
+				    ulSuccess = ERR_WINSUBCLASSWINDOW;
+				else
+					ulSuccess = NO_ERROR;
+
+				gHwndTlwCntr = WinWindowFromID( WinWindowFromID( pqmsg->hwnd, FID_CLIENT ), TLW_CONTAINER_ID );
+
+				ReportRC( ulSuccess );
+				break;
+			
+			case NICE_CMD_STOP:
+			
+				if( ( PFNWP ) WinQueryWindowPtr( pqmsg->hwnd, QWP_PFNWP ) != TlwWinProc )
+				{
+					ReportRC( ( ULONG ) ERR_TLW_STOPPED );
+					break;
+				};
+					
+				if( WinSubclassWindow( pqmsg->hwnd, gOriginalTlwWinProc ) == 0 )
+				{
+					ReportRC( ( ULONG ) ERR_WINSUBCLASSWINDOW );
+					break;
+				};
+			
+            	ReportRC( NO_ERROR );
+				break;
+        };
+
+        return TRUE;
+    };
+
+    return FALSE;
+};
+
+
+/*
+ *  report the return code
+ *
+ **/
+
+VOID ReportRC( ULONG RetCode )
+{
+	rc = DosOpenQueue( &pid,
+	                   &hqInstHookDone,
+	                   NICE_QUEUE_INST_HOOK );
+	if( rc )
+		return;
+
+   	rc = DosWriteQueue( hqInstHookDone,
+	               		RetCode,
+	               		sizeof( ULONG ),
+	               		0,
+                		0 );
+	if( rc )
+		return;
+					
+	DosCloseQueue( hqInstHookDone );
+};
+

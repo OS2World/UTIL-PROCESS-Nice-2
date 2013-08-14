@@ -1,0 +1,60 @@
+head	1.1;
+access;
+symbols;
+locks
+	idagan:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	99.02.13.18.24.33;	author idagan;	state Exp;
+branches;
+next	;
+
+
+desc
+@created
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+ *  Project:
+ *  Description:
+ *
+ *  By Sharon Dagan, idagan@@il.ibm.com
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#ifndef _UTIL_H_
+#define _UTIL_H_
+
+
+#define INCL_DOS
+#define INCL_WIN
+#include <os2.h>
+
+
+APIRET swlPidToHwnd( PID, HWND * );
+APIRET swlNameToPid( PSZ, PID * );
+APIRET qssPmShellPid( PID, PID * );
+LONG   my_strlen( CHAR * );
+LONG   my_strcmp( CHAR *, CHAR * );
+CHAR * my_strchr( CHAR *, CHAR );
+CHAR * my_strrchr( CHAR *, CHAR );
+
+#define va_arg( arg, type ) \
+        ( type ) *arg; arg++;
+
+LONG   my_vsprintf( CHAR *, const CHAR *, PVOID * );
+
+
+#endif
+@

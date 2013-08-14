@@ -1,0 +1,5 @@
+DESCRIPTION '@#idagan@il.ibm.com:0.03#@NicePM'
+
+IMPORTS
+	DosQuerySysState = DOSCALL1.368
+	

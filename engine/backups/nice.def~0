@@ -1,0 +1,10 @@
+DESCRIPTION	'@#idagan@il.ibm.com:0.04#@NICE/2 CL'
+
+IMPORTS
+	DosQuerySysState = DOSCALL1.368
+	
+EXPORTS
+	NiceSetPriority		@1
+	NiceStatus			@2
+	
+	

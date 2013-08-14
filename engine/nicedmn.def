@@ -1,0 +1,14 @@
+LIBRARY 		INITGLOBAL
+DESCRIPTION 	'@#idagan@il.ibm.com:0.06#@NICE/2 Engine'
+STACKSIZE 		0x8000
+DATA 			SINGLE SHARED
+PROTMODE
+
+IMPORTS
+	DosQuerySysState = DOSCALL1.368
+
+EXPORTS
+	Engine 				 @1
+	gHmEngine			 @2
+	gTidEngine			 @3
+

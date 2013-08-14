@@ -1,0 +1,36 @@
+/*
+ *  Project:
+ *  Description:
+ *
+ *  By Sharon Dagan, idagan@il.ibm.com
+ *  (C) copyright 1998, all rights reserved to IBM Israel
+ *
+ *  $Id$
+ *  $Date$
+ *
+ **/
+
+#ifndef _UTIL_H_
+#define _UTIL_H_
+
+
+#define INCL_DOS
+#define INCL_WIN
+#include <os2.h>
+
+
+APIRET swlPidToHwnd( PID, HWND * );
+APIRET swlNameToPid( PSZ, PID * );
+APIRET QueryPmShellPid( PID, PID * );
+LONG   my_strlen( CHAR * );
+LONG   my_strcmp( CHAR *, CHAR * );
+CHAR * my_strchr( CHAR *, CHAR );
+CHAR * my_strrchr( CHAR *, CHAR );
+
+#define va_arg( arg, type ) \
+        ( type ) *arg; arg++;
+
+LONG   my_vsprintf( CHAR *, const CHAR *, PVOID * );
+
+
+#endif
